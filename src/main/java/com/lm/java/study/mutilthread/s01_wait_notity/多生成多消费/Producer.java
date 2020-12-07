@@ -19,7 +19,7 @@ public class Producer {
                         System.out.println(Thread.currentThread().getName()+ "->生产者wait");
                         list.wait();
                     } else {
-                        int total = 10;
+                        int total = 3;
                         for (int i = 0 ; i< total ; i++){
                             System.out.println(Thread.currentThread().getName()+ "->生成i:"+i);
                             list.add(i);

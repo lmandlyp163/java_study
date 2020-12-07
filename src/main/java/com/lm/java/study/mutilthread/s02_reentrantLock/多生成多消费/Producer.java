@@ -31,7 +31,7 @@ public class Producer {
                 if (CollectionUtils.isNotEmpty(list)){//数据不需要生产
                     producerCondition.await();
                 } else {// 需要生产
-                    int total = 10;
+                    int total = 3;
                     for (int i = 1 ; i <= total ; i++){
                         list.add(i);
                         System.out.println(Thread.currentThread().getName()+"：生产者生产"+i);
