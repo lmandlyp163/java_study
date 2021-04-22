@@ -1,0 +1,92 @@
+@startuml
+skinparam  shadowing false
+skinparam usecase {
+'BackgroundColor white
+'BorderColor black
+
+'BackgroundColor<< Main >> YellowGreen
+'BorderColor<< Main >> YellowGreen
+
+'ArrowColor black
+'ActorBorderColor black
+'ActorFontName Courier
+
+'ActorBackgroundColor<< user >> black
+}
+left to right direction
+actor "供应商" as supplier
+actor "骑手" as user
+
+
+
+
+
+user --> (获取IM入口按钮)
+note right : 根据业务供应商配置与供应商是否开启IM开关判断
+(获取IM入口按钮) <.. (商品详情)
+(获取IM入口按钮) <.. (店铺详情)
+(获取IM入口按钮) <.. (订单详情)
+
+user --> (进入聊天室)
+(进入聊天室) <.. (欢迎语)
+note right : 商家配置欢迎语
+(进入聊天室) <.. (获取卡片)
+(获取卡片)   <.. (商品卡片)
+note right : 仅从商品详情页入口进来时，则展示此商品卡片，每次进来均展示
+(获取卡片)   <.. (订单卡片)
+note right : 仅从订单详情页入口进来时，则展示此订单卡片，每次进来均展示
+(进入聊天室) <.. (消息已读未读)
+
+user --> (查看历史消息)
+
+user --> (发送卡片)
+(发送卡片)   <.. (发送商品卡片)
+(发送卡片)   <.. (发送订单卡片)
+
+user --> (发送消息)
+(发送消息)   <.. (图片)
+(发送消息)   <.. (表情)
+(发送消息)   <.. (文字)
+(发送消息)   <.. (卡片)
+
+
+user --> (拉黑供应商)
+
+user --> (商城跳转)
+(商城跳转)   <.. (商品详情页)
+(商城跳转)   <.. (店铺详情页)
+(商城跳转)   <.. (订单详情页)
+
+user --> (获取店铺下所有商品卡片)
+
+user --> (我的消息列表)
+note right : 商家头图、商家名称、最近消息内容、最近消息时间、未读标记
+
+user --> (骑手消息触达)
+note right : 待定
+
+
+supplier --> (菜单入口)
+supplier --> (消息列表)
+supplier --> (查看消息提醒)
+supplier --> (查看消息)
+supplier --> (拉黑骑手)
+(查看消息) <.. (查看会话列表)
+(查看消息) <.. (查看商品信息 )
+(查看消息) <.. (查看订单信息 )
+(查看消息) <.. (查看可发送组件 )
+
+supplier --> (聊天室)
+(聊天室) <.. (发送文本)
+(聊天室) <.. (发送图片)
+(聊天室) <.. (发送表情)
+
+
+supplier --> (开启/关闭IM)
+supplier --> (开通关闭配置)
+supplier --> (服务时间配置)
+supplier --> (欢迎语配置)
+supplier --> (供应商消息触达)
+note right : 待定
+
+@enduml

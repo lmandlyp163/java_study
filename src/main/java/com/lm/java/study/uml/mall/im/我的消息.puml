@@ -1,0 +1,37 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 我的消息列表交互
+
+actor 用户 as user
+participant "众包/专送/星火APP" as APP
+participant 骑手商城 as RiderMall
+participant IM系统 as IM
+
+user -> APP:点击消息tab
+activate APP
+    APP -> RiderMall:查询会话列表
+    activate RiderMall
+        RiderMall -> IM:RPC:查询会话列表
+        activate IM
+
+            IM -> IM:查询会话列表
+            activate IM
+            deactivate IM
+
+            IM -> IM:查询会话未读消息数
+            activate IM
+            deactivate IM
+
+            IM -> RiderMall:RPC:批量查询供应商信息\n（供应商ID列表）
+            activate RiderMall
+            IM <-- RiderMall:供应商头像，名称
+            deactivate RiderMall
+        RiderMall <-- IM:会话列表\n(名称、头像、最近消息内容、时间、聊天页链接、未读消息数、未读标记)
+        note right : 总未读数前端计算还是IM返回？
+        deactivate IM
+    APP <-- RiderMall
+    deactivate RiderMall
+user <-- APP
+deactivate APP
+
+@enduml
