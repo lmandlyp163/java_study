@@ -1,0 +1,106 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 供应商账户更新
+actor 运营 #red
+
+
+运营 -> 烽火台前端 : 供应商账户更新
+烽火台前端 -> 骑手商城后端 : 供应商账户更新
+note right
+核心改动参数:
+1、结算方式settleType = 1=周期结算
+2、payPeriodNum 结算周期数
+3、payPeriodUnit 周期单位，1=天、2=周、3=月、4=指定日期（1-28），骑手商城默认 1
+end note
+骑手商城后端 -> MCC : 获取可操作的用户权限
+骑手商城后端 -> 骑手商城后端 : 校验权限
+骑手商城后端 -> 服务市场 : 供应商账户更新
+服务市场 -> 服务市场 : 判断是否开通保证金账号不能关闭
+服务市场 -> 服务市场 : 判断供应商是否签约完成
+服务市场 --> 骑手商城后端 : 没有签约则提示运营不能更新
+
+alt 商户结算配置更新
+服务市场 -> 服务市场 : 获取供应商进件信息，判断是否已完成进件
+服务市场 -> 服务市场 : 获取线下供应商表数据，判断线下供应商数据是否完整
+服务市场 -> 服务市场 : 获取供应商已存储的支付结算ID
+note right : db（pay_settle_id） 接口（settlementId）
+alt pay_settle_id 是否大于0
+else  账号新增
+服务市场 -> 美团支付平台 : 申请结算支付id
+note right
+入参：
+1、bizSerialNo#业务方唯一请求标识--》System.currentTimeMillis()
+2、iphPayMerchantNo#平台商户号--》11000113270538
+3、settlementMode#结算方式 1)支付会员 2)银行卡 3）支付会员+银行卡 --》2)银行卡
+4、merchantId#二级商户号--》支付进件ID
+5、settleObjName#结算对象名称（银行卡的户名）--》开户人姓名
+6、settleBankcardNumEncrypt#结算银行卡，需要加密【使用钱包的对外公钥进行加密
+7、settleBankcardAccountType#结算银行卡类型 1)对公 2)对私
+8、settleBankcardBankId#结算银行卡收款行id
+9、settleBankcardBranchId#结算银行卡支行id
+10、settleBankcardBranchName#结算银行卡支行名称
+11、settleBankcardBranchCityId#结算银行卡支行城市id
+12、sign#签名--》SignTypeEnum.RSA
+end note
+美团支付平台 --> 服务市场 : 返回结算支付id
+else  账号更新
+服务市场 -> 服务市场 : 判断核心钱包数据是否变更，如果没有变更则不更新结算支付id
+note right
+核心比较数据：
+1、银行卡号
+2、对公或对私
+3、银行Id
+4、支行Id
+5、支行名称
+6、一级城市id
+end note
+
+服务市场 -> 美团支付平台 : 删除结算配置
+note right
+核心入参：
+1、iphPayMerchantNo#平台商户号--》11000113270538
+2、merchantId#二级商户号--》支付进件ID
+3、settlementId#结算id
+end note
+美团支付平台 --> 服务市场 : 返回删除结果
+
+服务市场 -> 美团支付平台 : 重新新建供应商结算配置
+美团支付平台 --> 服务市场 : 返回结算支付id
+note right : 注意这时结算支付id 会变
+end
+服务市场 -> 服务市场 : 更新结算状态描述
+服务市场 -> 服务市场 : 更新结算支付id到数据库中
+
+
+end
+
+
+alt 商户结算配置更新
+服务市场 -> 服务市场 : 更新DB中结算相关的配置
+note right : 将周期结算配置存储到新字段
+end
+
+alt 打款信息更新
+服务市场 -> 服务市场 : 更新DB中打款信息更新
+end
+
+alt 费率更新
+服务市场 -> 服务市场 : 费率更新
+end
+
+alt 通知外卖结算
+服务市场 -> 外卖结算 : MQ消息通知
+note right
+    "partnerId": 123213, // 合作方id，供应商id
+    "partnerType" 101 // 合作方类型，int 类型
+    "partnerName": "商家名字", // 供应商名字，string 类型
+    "opType": 1, //  操作类型，1 商家上线 2 商家下线    int类型
+    "settleType": 1// 结算类型，1=周期结算；2=商家自提；3=固定日期结算；4=固定月末结算   int类型
+    "payPeriodNum": 3 // 结算周期数（结合周期单位使用），int类型
+    "payPeriodUnit": 1 //周期单位，1=天、2=周、3=月、4=指定日期（1-28） int类型
+    "onlineTime": 12313 // 到毫秒时间戳，表示上线时间   long类型
+end note
+end
+
+
+@enduml

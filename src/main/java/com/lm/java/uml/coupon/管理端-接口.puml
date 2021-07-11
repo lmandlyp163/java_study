@@ -1,0 +1,37 @@
+@startuml
+skinparam  shadowing false
+skinparam usecase {
+'BackgroundColor white
+'BorderColor black
+
+'BackgroundColor<< Main >> YellowGreen
+'BorderColor<< Main >> YellowGreen
+
+'ArrowColor black
+'ActorBorderColor black
+'ActorFontName Courier
+
+'ActorBackgroundColor<< user >> black
+}
+left to right direction
+
+
+管理端功能 --> (获取后台类目列表) : 接口复用
+管理端功能 --> (判断商品id是否为有效商品&返回是否预售标签) : 接口需改造
+管理端功能 --> (获取劵配置的一些枚举信息) : 接口新增
+管理端功能 --> (获取优惠劵活动详情) : 接口新增
+管理端功能 --> (优惠劵列表查询) : 接口新增
+(优惠劵列表查询) <.. (数据组-获取劵的是与情况) : 数据组接口
+管理端功能 --> (优惠劵更新/新增) : 接口新增
+(优惠劵更新/新增) <.. (劵平台-优惠劵更新/新增) : 劵平台接口
+管理端功能 --> (撤销活动) : 接口新增
+(撤销活动) <.. (劵平台-撤销活动) : 劵平台接口
+管理端功能 --> (系统下发优惠劵) : crane任务
+(系统下发优惠劵) <.. (劵平台-系统领取优惠劵) : 劵平台接口
+管理端功能 --> (push&消息通知) : crane任务
+(push&消息通知) <.. (消息中心-各种渠道通知) : 消息中心接口
+管理端功能 --> (订单详情&订单导出支持平台优惠金额) : 接口需改造
+(订单详情&订单导出支持平台优惠金额) <.. (订单中心-订单详情&订单导出查询接口) : 订单中心接口
+管理端功能 --> (聚合页列表) : 接口需改造
+管理端功能 --> (聚合页更新/新增) : 接口需改造
+@enduml

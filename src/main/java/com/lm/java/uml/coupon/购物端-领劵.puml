@@ -1,0 +1,17 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 领取优惠券
+actor 骑手 #red
+
+骑手 -> 前端: ② 领取优惠券
+前端 -> API平台 : <B>领取优惠券</B> \n 1、优惠券ID \n 2、用户BmUserId \n 3、活动ID \n 4、优惠券标识码
+note right
+新增入参:
+todo
+end note
+API平台 -> 骑手商城交易service : 优惠券领取
+骑手商城交易service -> 券平台 : 根据优惠券ID、活动ID和用户BmUserId领券
+券平台 --> 骑手商城交易service : 返回领券结果
+骑手商城交易service --> API平台 : 返回领券结果
+API平台 --> 前端 : 返回领券结果
+@enduml

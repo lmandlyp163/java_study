@@ -1,0 +1,31 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title push通知
+actor 用户 #red
+
+骑手商城服务端 -> 骑手商城服务端 : 计算待push用户
+骑手商城服务端 -> 骑手商城服务端 : 获取用户渠道，并判断渠道是否符合活动渠道，不符合则跳过
+note right
+内容:
+后台配置优惠券，选择“系统下发”，触发push机制：
+title：优惠券已到账，请注意查收
+subtitle：满xx减xx，满xx减xx，满xx减xx（至多只读取前3个）
+点击：跳转到“我的-我的优惠券”列表
+end note
+par 专送渠道
+    骑手商城服务端 -> 消息中心 : 调用专送渠道发送
+end
+par 众包渠道
+    骑手商城服务端 -> 消息中心 : 调用众包渠道发送
+end
+par 星火渠道
+    骑手商城服务端 -> 消息中心 : 调用星火渠道发送
+end
+note right : 发送push&发送消息通知
+
+消息中心 -> 用户 : push
+note right : 消息列表中需要支持点击吗？
+用户 -> 用户 : 点击
+用户 -> 骑手商城APP : 跳转到我的优惠劵列表
+note right : 用户没有登录或非正常用户，可能跳转失败,app 需要关注异常处理
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 订单提单
+actor 用户 #red
+
+用户 -> 购物端APP: 订单提单
+note right
+新增核心入参:
+1、店铺下平台优惠劵的选择id
+end note
+购物端APP -> 骑手商城服务端 : 订单提单
+骑手商城服务端 -> 订单中心 : 订单提单
+订单中心 -> 骑手商城服务端 : 提单结果
+note right : 需要考虑劵使用失败的异常场景，需要返回对应的code
+骑手商城服务端  -> 购物端APP: 返回结果
+
+@enduml

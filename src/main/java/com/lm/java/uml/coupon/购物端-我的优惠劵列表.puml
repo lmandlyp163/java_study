@@ -1,0 +1,64 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 我的优惠券
+actor 骑手 #red
+
+骑手 -> 前端: 获取个人有效优惠券
+前端 -> API平台 : <B>获取个人有效优惠券</B> \n 1、骑手bmUserId
+API平台 -> 骑手商城交易service : 获取个人有效优惠券
+骑手商城交易service -> 券平台 :  <B>我的优惠券只查看 未使用的优惠券</B> \n 根据bmUserId和租户号查询有效优惠券
+note right : todo入参是否需要调整？
+
+券平台 --> 骑手商城交易service : 返回券列表
+note right
+结果：
+<B>老数据</B>
+1、优惠券ID
+2、优惠劵名称
+3、使用状态
+    --0-未使用，1-已使用，2-已过期，3-已冻结，4-已锁定
+4、优惠券金额
+5、优惠券门槛
+6、领取时间
+7、领券渠道
+8、销售渠道
+9、优惠券有效期-开始时间 & 优惠券有效期-结束时间
+10、门店id
+11、skuids
+12、couponStatus 领取状态
+    --没有用吗？
+<B>新数据</B>
+1、劵类型（店铺劵、平台劵（全平台、品类、指定商品））
+2、劵对应的内容
+end note
+
+骑手商城交易service -> 骑手商城交易service : 剔除不满足用户渠道的优惠劵
+
+
+par 店铺劵
+骑手商城交易service -> 获取店铺信息 : 获取店铺名称
+骑手商城交易service -> 获取店铺信息 : 组织商品信息（spuvo）
+note right : 核心保持老逻辑
+end
+
+par 平台劵
+    else 优惠劵活动优惠券范围为全平台
+        骑手商城交易service -> 骑手商城交易service : 新增商品ids扩展字段spuIds&&spuIds为空list
+        note right : 注意点（商品ids为空list）
+    else 优惠劵活动优惠券范围为后台类目
+        骑手商城交易service -> 商品中心 : 根据后台类目ids批量获取类目对应的商品ids，并赋值到新增的扩展字段spuIds
+        note right : 商品中心可支持
+        商品中心 ->   骑手商城后端: 返回商品spuIds
+    else 优惠劵活动优惠券范围为自定义商品id
+        骑手商城交易service -> 骑手商城后端 : 获取优惠劵配置内容中的商品ids赋值到新的spuIds字段返回
+    骑手商城交易service -> 骑手商城交易service : 组装spuIds
+end
+
+骑手商城交易service -> 骑手商城交易service : 对平台劵与店铺劵排序
+note right : “平台优惠券”，高优顶部展示,多张券按照优惠金额的幅度由大到小进行排序；幅度一致，判断距离优惠券过期的远近，由近到远进行排序；
+
+骑手商城交易service -> 骑手商城交易service : 对优惠券按照店铺分组、排序
+note right : 店铺劵类型
+骑手商城交易service --> API平台 : 优惠券列表返回
+API平台 --> 前端 : 优惠券列表返回
+@enduml

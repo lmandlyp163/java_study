@@ -1,0 +1,19 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 去使用
+actor 用户 #red
+购物端APP --> 骑手商城交易service: 获取优惠劵中的商品信息
+用户 -> 购物端APP: 去使用
+
+par 店铺劵
+购物端APP -> 购物端APP : 获取优惠劵上的spuvo中的spuid
+购物端APP -> 购物端APP : 跳转
+note right : 单spu跳转商品详情，多spu跳转商品列表
+end
+
+par 平台劵
+购物端APP -> 购物端APP : 获取优惠劵上的spuIds
+购物端APP -> 购物端APP : 跳转商品列表
+end
+
+@enduml
