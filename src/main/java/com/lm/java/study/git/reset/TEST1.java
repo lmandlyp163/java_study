@@ -10,5 +10,7 @@ public class TEST1 {
     public static void main(String[] args) {
         System.out.println("版本test2");
         System.out.println("版本test2");
+        System.out.println("版本test1");
+        System.out.println("版本test1");
     }
 }
