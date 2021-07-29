@@ -15,15 +15,11 @@ public class VisibilityTest {
                 Executors.newCachedThreadPool();
         //线程开始
         executorService.execute(() -> {
-            Integer i= 1;
             while(a){
-                synchronized (i){
-                    i++;
-                }
             }
             System.out.println("我退出了");
         });
+        Thread.sleep(100);
         a = false;
-        System.out.println(a);
     }
 }
