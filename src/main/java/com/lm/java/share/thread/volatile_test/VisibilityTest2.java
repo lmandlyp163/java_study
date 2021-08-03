@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author lm
+ * 根据之前的不可见的case加上关键字volatile之后可见了
  **/
 public class VisibilityTest2 {
     public volatile  static  boolean a = true;

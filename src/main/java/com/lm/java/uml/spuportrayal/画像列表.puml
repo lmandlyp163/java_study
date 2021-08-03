@@ -1,0 +1,17 @@
+@startuml
+skinparam backgroundColor #FFFFFC
+title 供应商账户更新
+actor 运营 #red
+
+运营 -> 烽火台前端 : 查询画像列表
+烽火台前端 -> 骑手商城后端 : 查询画像列表
+note right
+入参:
+1、画像名称
+2、画像id
+3、排序逻辑（更新时间）
+4、分页
+end note
+骑手商城后端 -> DB : 查询画像列表
+
+@enduml
